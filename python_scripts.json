@@ -450,6 +450,16 @@
     "Description": "Fix and/or Resize Adobe Premiere XML's."
   },
   {
+    "Script Name": "Path Translator",
+    "Script Version": "2.1.0",
+    "Flame Version": "2025",
+    "Maximum Flame Version": "Latest",
+    "Author": "Kieran Hanrahan",
+    "Creation Date": "02.10.24",
+    "Update Date": "09.05.25",
+    "Description": "Take a path, either Windows or POSIX, and extract part of the path using tokens.\nUseful for converting windows paths to POSIX for Flame, or even paths from other\nmachines that just have different mount points."
+  },
+  {
     "Script Name": "Ratio Bug Fix",
     "Script Version": "1.0",
     "Flame Version": "2024.2",

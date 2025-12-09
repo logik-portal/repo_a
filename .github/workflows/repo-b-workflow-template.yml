@@ -42,6 +42,9 @@ jobs:
       - name: Run build_python_scripts_json.py
         env:
           REPO_A_PATH: ${{ github.workspace }}/repo_a
+          REPO_OWNER: ${{ env.REPO_A_OWNER }}
+          REPO_NAME: ${{ env.REPO_A_NAME }}
+          REPO_BRANCH: ${{ env.REPO_A_BRANCH }}
         run: |
           # The script should read from repo_a and output python_scripts.json in Repo B root
           python build_python_scripts_json.py

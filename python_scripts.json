@@ -458,5 +458,15 @@
     "Creation Date": "02.14.24",
     "Update Date": "02.14.24",
     "Description": "Script Name: Ratio Bug Fix\nScript Version: 1.0\nFlame Version: 2024.2\nWritten by: Bryan Bayley\nCreation Date: 02.14.24\n\nDescription: There is a bug when conforming an AAF/XML with footage at a different resolution than the offline edit.\nSegments with an Action timeline effect will not display the correct size/ratio. To fix this, we add a Source Color\nManagement timeline effect, and immediately remove it to get flame to recognize the correct resolution of the source footage."
+  },
+  {
+    "Script Name": "SRT to XML",
+    "Script Version": "3.7.0",
+    "Flame Version": "2023.2",
+    "Maximum Flame Version": "Latest",
+    "Author": "Michael Vaglienty",
+    "Creation Date": "05.01.20",
+    "Update Date": "04.13.25",
+    "Description": "Convert SRT files to XML files that can be imported into Flame through MediaHub"
   }
 ]

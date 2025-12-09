@@ -1,0 +1,72 @@
+# This workflow should be placed in Repo B at: .github/workflows/build-and-push-json.yml
+# Repository configuration - easily changeable constants
+name: Build and Push JSON to Repo A
+
+on:
+  repository_dispatch:
+    types: [build-json]
+
+env:
+  REPO_A_OWNER: "logik-portal"
+  REPO_A_NAME: "repo_a"
+  REPO_A_BRANCH: "main"  # Change if Repo A uses a different default branch
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo A (for script to scan)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.REPO_A_OWNER }}/${{ env.REPO_A_NAME }}
+          ref: ${{ env.REPO_A_BRANCH }}
+          token: ${{ secrets.REPO_A_PAT }}  # Personal Access Token with read access to Repo A
+          path: repo_a
+
+      - name: Checkout Repo B
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Add any required dependencies here
+          # pip install -r requirements.txt
+
+      - name: Run build_python_scripts_json.py
+        env:
+          REPO_A_PATH: ${{ github.workspace }}/repo_a
+        run: |
+          # The script should read from repo_a and output python_scripts.json in Repo B root
+          python build_python_scripts_json.py
+
+      - name: Checkout Repo A again (for pushing)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.REPO_A_OWNER }}/${{ env.REPO_A_NAME }}
+          ref: ${{ env.REPO_A_BRANCH }}
+          token: ${{ secrets.REPO_A_PAT }}  # Personal Access Token with write access to Repo A
+          path: repo_a_push
+
+      - name: Copy JSON file to Repo A
+        run: |
+          cp python_scripts.json repo_a_push/python_scripts.json
+
+      - name: Commit and push to Repo A
+        run: |
+          cd repo_a_push
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add python_scripts.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update python_scripts.json from Repo B workflow [skip ci]"
+            git push
+          fi

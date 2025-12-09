@@ -28,11 +28,13 @@ The workflow file `.github/workflows/trigger-repo-b.yml` has been created.
 #### C. Modify build_python_scripts_json.py
 The script should generate `python_scripts.json` in the root of Repo B. The workflow will handle copying it to Repo A.
 
+**⚠️ IMPORTANT: Use a relative path, NOT an absolute path!**
+
 Example script structure:
 ```python
 #!/usr/bin/env python3
 """
-Script to build python_scripts.json from Repo A's script directories
+Script to build python_scripts_json.py from Repo A's script directories
 """
 import json
 import os
@@ -42,18 +44,25 @@ def build_python_scripts_json():
     # Your existing logic to build the JSON
     # ...
 
-    # Write the JSON file to the current directory (Repo B root)
-    output_path = Path("python_scripts.json")
+    # ✅ CORRECT: Write the JSON file to the current directory (Repo B root)
+    # Use a relative path - this will work in GitHub Actions
+    output_path = Path("python_scripts.json")  # Relative path
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(scripts_data, f, indent=2, ensure_ascii=False)
 
-    print(f"Generated {output_path}")
+    print(f"Generated {output_path.absolute()}")  # Shows full path for debugging
 
 if __name__ == "__main__":
     build_python_scripts_json()
 ```
 
-**Note:** The script should output `python_scripts.json` in the root of Repo B. The workflow will handle pushing it to Repo A.
+**Common Error:**
+```python
+# ❌ WRONG - Don't use hardcoded absolute paths like this:
+output_file = '/Users/mike/Desktop/python_scripts.json'  # This will fail in GitHub Actions!
+```
+
+**Note:** The script should output `python_scripts.json` in the root of Repo B using a **relative path**. The workflow will handle copying it to Repo A.
 
 ### 3. Testing
 
@@ -67,3 +76,4 @@ if __name__ == "__main__":
 - **Workflow not triggering in Repo B:** Check that `REPO_B_PAT` secret in Repo A has correct permissions
 - **Push to Repo A failing:** Check that `REPO_A_PAT` secret in Repo B has write permissions to Repo A
 - **JSON file not found:** Ensure `build_python_scripts_json.py` outputs to `python_scripts.json` in Repo B root
+- **FileNotFoundError with absolute path:** The script is using a hardcoded absolute path. Change it to a relative path like `Path("python_scripts.json")`. See `WORKFLOW_FIX.md` for details.
